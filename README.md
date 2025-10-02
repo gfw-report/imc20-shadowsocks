@@ -32,11 +32,11 @@ dnf install tshark parallel   # Fedora-based
 
 ### triggering_client_server
 
-[`code/triggering_client_server`](./code/triggering_client_server) includes the source code of the clients and sink/responding servers used in [Section 4.1](./paper/shadowsocks.pdf#page=6).
+[`code/triggering_client_server`](./code/triggering_client_server) includes the source code of the clients and sink/responding servers used in [Section 4.1](https://gfw.report/publications/imc20/en/#4-1).
 
 ### Prober simulator
 
-[`code/prober_simulator`](../data/code/prober_simulator) includes the source code of the prober simulators introduced in [Section 5.1](../data/paper/shadowsocks.pdf#page=8).
+[`code/prober_simulator`](../data/code/prober_simulator) includes the source code of the prober simulators introduced in [Section 5.1](https://gfw.report/publications/imc20/en/#4-1).
 It can simulate both random and replay-based probes.
 One can use it to check if other Shadowsocks implementations (or other circumvention tools) have similar vulnerabilities introduced in the paper.
 
