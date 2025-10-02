@@ -1,0 +1,49 @@
+#!/usr/bin/env python3
+
+# Usage: filter-csv < bj6-new_sfo4_columns_added.csv > filtered.csv
+#
+# Removes some unused rows and columns from bj6-new_sfo4_columns_added.csv to
+# reduce its size.
+
+import csv
+import sys
+
+KEEP_FIELD_NAMES = set((
+    "frame_num",
+    "frame_epoch_time",
+    "payload_type",
+    "entropy",
+))
+WANTED_PAYLOAD_TYPES = set([0, 1, 2])
+
+def parse_bool(v):
+    if v == "False":
+        return False
+    elif v == "True":
+        return True
+    else:
+        raise ValueError(f"unknown boolean value {v!r}")
+
+def fmt_bool(v):
+    return "TRUE" if v else "FALSE"
+
+r = csv.DictReader(sys.stdin, delimiter = ";")
+w = csv.DictWriter(sys.stdout, delimiter = ";", fieldnames = [x for x in r.fieldnames if x in KEEP_FIELD_NAMES])
+w.writeheader()
+
+for row in r:
+    if int(row["payload_type"]) not in WANTED_PAYLOAD_TYPES:
+        continue
+
+    row["is_legit"] = parse_bool(row["is_legit"])
+    if row["is_legit"]:
+        row["ip_src"] = "X.X.X.X"
+    row["is_legit"] = fmt_bool(row["is_legit"])
+
+    row["entropy"] = "{:.3f}".format(float(row["entropy"]))
+
+    for x in list(row.keys()):
+        if not x in KEEP_FIELD_NAMES:
+            del row[x]
+
+    w.writerow(row)

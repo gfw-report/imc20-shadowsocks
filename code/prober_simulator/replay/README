@@ -1,0 +1,13 @@
+# Record and Replay Legit Payload
+
+## record_legit_payload.sh
+
+`record_legit_payload.sh` starts both ss-server and ss-local; and records the connection payload sent by ss-local.
+
+The payload is recorded to the `first_legit_payload.log`.
+
+It will also keep all the log and pcap files in a directory like `log_${epochtime}`.
+
+## replay_prober.py
+
+`replay_prober.py` replays the connections recorded in `first_legit_payload.log`; and logs server reactions.

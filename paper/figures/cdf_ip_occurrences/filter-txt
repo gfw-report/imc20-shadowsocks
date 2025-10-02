@@ -1,0 +1,19 @@
+#!/usr/bin/env python3
+
+# Usage: filter-txt exclude1.txt exclude2.txt < probes_from_column_add_files.txt > probes_from_column_add_files_filtered.txt
+
+import getopt
+import sys
+
+_, exclude_filenames = getopt.gnu_getopt(sys.argv[1:], "")
+
+exclude = set()
+for exclude_filename in exclude_filenames:
+    with open(exclude_filename) as f:
+        exclude.update(line.strip() for line in f)
+
+for line in sys.stdin:
+    line = line.strip()
+    if line in exclude:
+        continue
+    print(line)

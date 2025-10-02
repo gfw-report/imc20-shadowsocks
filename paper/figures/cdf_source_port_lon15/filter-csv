@@ -1,0 +1,38 @@
+#!/usr/bin/env python3
+
+# Usage: filter-csv < bj17_lon15_exp1_columns_added.csv > filtered.csv
+#
+# Removes some unused rows from bj17_lon15_exp1_columns_added.csv
+# to reduce its size.
+
+import csv
+import sys
+
+REMOVE_FIELD_NAMES = set((
+    "",
+    "ip_dst",
+    "tcp_dstport",
+    "payload",
+))
+
+def parse_bool(v):
+    if v == "False":
+        return False
+    elif v == "True":
+        return True
+    else:
+        raise ValueError(f"unknown boolean value {v!r}")
+
+r = csv.DictReader(sys.stdin, delimiter = ";")
+w = csv.DictWriter(sys.stdout, delimiter = ";", fieldnames = [x for x in r.fieldnames if x not in REMOVE_FIELD_NAMES])
+w.writeheader()
+
+for row in r:
+    for x in REMOVE_FIELD_NAMES:
+        del row[x]
+    if int(row["tcp_flags"], 0) != 0x02:
+        continue
+    if parse_bool(row["is_legit"]):
+        row["ip_src"] = "X.X.X.X"
+
+    w.writerow(row)

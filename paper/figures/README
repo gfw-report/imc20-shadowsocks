@@ -1,0 +1,20 @@
+Makefile contains rules for generating figures. Run
+	make
+
+The code requires Python 3, NumPy, and Pandas.
+
+The input data for the figures is derived ultimately from pcap files,
+which are gigabytes in size and not versioned in this repository. In
+this repository there are filtered and reduced CSV files containing only
+what is necessary for the figures, and additionally filtered to redact
+the IP addresses of experimental hosts. There are rules in Makefile to
+recreate these minimized CSV files from complete CSV files, which in
+turn were generated from Jupyter notebooks with access to the source
+pcap files. If you put the complete CSV files in the proper place (see
+Makefile rules), then `make` will also rebuild these minimized CSV
+files.
+
+In the cdf_ip_occurrences subdirectory, excluded_ip_list.txt is a list
+of IP addresses to exclude, a file copied from the original Jupyter
+source directory. exclude_additional.txt contains IP addresses to
+exclude that were hardcoded in the original Jupyter processing script.

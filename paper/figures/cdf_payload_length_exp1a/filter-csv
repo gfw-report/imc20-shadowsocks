@@ -1,0 +1,49 @@
+#!/usr/bin/env python3
+
+# Usage: filter-csv < bj3-new_sfo1_ncatlike_all_columns_added.csv > filtered.csv
+#
+# Removes some unused rows and columns from
+# bj3-new_sfo1_ncatlike_all_columns_added.csv to reduce its size.
+
+import csv
+import sys
+
+REMOVE_FIELD_NAMES = set((
+    "",
+    "ip_dst",
+    "tcp_dstport",
+    "payload",
+))
+WANTED_PAYLOAD_TYPES = set([0, 1, 2, 3])
+RESPONDING_EXP_START_TS = 1590727761.602623000
+
+def parse_bool(v):
+    if v == "False":
+        return False
+    elif v == "True":
+        return True
+    else:
+        raise ValueError(f"unknown boolean value {v!r}")
+
+def fmt_bool(v):
+    return "TRUE" if v else "FALSE"
+
+r = csv.DictReader(sys.stdin, delimiter = ";")
+w = csv.DictWriter(sys.stdout, delimiter = ";", fieldnames = [x for x in r.fieldnames if x not in REMOVE_FIELD_NAMES])
+w.writeheader()
+
+for row in r:
+    if int(row["payload_type"]) not in WANTED_PAYLOAD_TYPES:
+        continue
+    if float(row["frame_epoch_time"]) >= RESPONDING_EXP_START_TS:
+        continue
+
+    for x in REMOVE_FIELD_NAMES:
+        del row[x]
+
+    row["is_legit"] = parse_bool(row["is_legit"])
+    if row["is_legit"]:
+        row["ip_src"] = "X.X.X.X"
+    row["is_legit"] = fmt_bool(row["is_legit"])
+
+    w.writerow(row)

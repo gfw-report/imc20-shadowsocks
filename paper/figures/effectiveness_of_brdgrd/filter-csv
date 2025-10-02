@@ -1,0 +1,30 @@
+#!/usr/bin/env python3
+
+# Usage: filter-csv < bj6-new_sfo4_columns_added.csv > filtered.csv
+#
+# Removes some unused rows and columns from bj6-new_sfo4_columns_added.csv to
+# reduce its size.
+
+import csv
+import sys
+
+KEEP_FIELD_NAMES = set((
+    "tcp_flags",
+    "is_legit",
+    "frame_epoch_time",
+    "frame_relative_time",
+))
+
+r = csv.DictReader(sys.stdin, delimiter = ";")
+w = csv.DictWriter(sys.stdout, delimiter = ";", fieldnames = [x for x in r.fieldnames if x in KEEP_FIELD_NAMES])
+w.writeheader()
+
+for row in r:
+    if int(row["tcp_flags"], 0) != 0x02:
+        continue
+
+    for x in list(row.keys()):
+        if not x in KEEP_FIELD_NAMES:
+            del row[x]
+
+    w.writerow(row)
